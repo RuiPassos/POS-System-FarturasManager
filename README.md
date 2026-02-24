@@ -30,7 +30,8 @@ Desenvolvi uma solução personalizada que prioriza a **velocidade** e a **fiabi
 | **Interface de Vendas (PDV)** | **Dashboard Administrativo** |
 | :--- | :--- |
 | <img width="3439" height="1439" alt="image" src="https://github.com/user-attachments/assets/6fcc8d4e-a7bc-46c6-a991-fb79435155b5" />
-| ![Admin](TEU_LINK_AQUI_2) |
+| <img width="1870" height="1073" alt="image" src="https://github.com/user-attachments/assets/80257409-183d-4b82-8620-45e6ac02ff78" />
+ |
 | *Registo rápido com suporte a NIF e multi-pagamento.* | *Análise de faturação consolidada por hora.* |
 
 ---
