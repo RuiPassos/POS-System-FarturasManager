@@ -27,12 +27,13 @@ Desenvolvi uma solução personalizada que prioriza a **velocidade** e a **fiabi
 
 ## 📸 Screenshots do Sistema
 
-| **Interface de Vendas (PDV)** | **Dashboard Administrativo** |
-| :--- | :--- |
-| <img width="3439" height="1439" alt="image" src="https://github.com/user-attachments/assets/6fcc8d4e-a7bc-46c6-a991-fb79435155b5" />
-| <img width="1870" height="1073" alt="image" src="https://github.com/user-attachments/assets/80257409-183d-4b82-8620-45e6ac02ff78" />
- |
-| *Registo rápido com suporte a NIF e multi-pagamento.* | *Análise de faturação consolidada por hora.* |
+| **Interface de Vendas (PDV)** | **Seleção de Pagamento** |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/6fcc8d4e-a7bc-46c6-a991-fb79435155b5" width="400"> | <img width="3439" height="1439" alt="image" src="https://github.com/user-attachments/assets/1948f6d8-fd6b-4327-b7f8-418eeda67681" />|
+| *Registo rápido com suporte a NIF* | *Múltiplos métodos de pagamento* |
+| **Dashboard Administrativo** | **Gestão de Produtos** |
+| <img width="1866" height="1072" alt="image" src="https://github.com/user-attachments/assets/79441d3f-2557-4d3c-b941-119c4b92bfe8" /> | <img width="1375" height="788" alt="image" src="https://github.com/user-attachments/assets/926bbbe0-6a75-407a-b59d-9f2d222c9564" />|
+| *Análise de faturação por hora* | *CRUD completo de inventário e fotos* |
 
 ---
 
