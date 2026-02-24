@@ -1,8 +1,10 @@
-﻿using System;
+﻿using FarturaManager.Dados; // Isto liga ao Passo 2
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data.SQLite;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Data.SQLite;
-using FarturaManager.Dados; // Isto liga ao Passo 2
 
 namespace FarturasManager
 {
@@ -53,103 +55,101 @@ namespace FarturasManager
 
         // Variáveis que vão guardar os nossos painéis organizados
         private TableLayoutPanel grelhaPrincipal = null;
-        private FlowLayoutPanel painelFarturas, painelChurrosCob, painelCones, painelChurrosSimp, painelRecheadas, painelBebidas;
 
         private void CarregarBotoesDoBanco()
         {
-            // 1. O TRUQUE: Trocar o painel antigo pela Grelha Inteligente
+            // 1. O TRUQUE: Trocar o painel antigo pela Grelha Inteligente (Só corre 1 vez)
             if (grelhaPrincipal == null)
             {
                 grelhaPrincipal = new TableLayoutPanel();
                 grelhaPrincipal.Dock = DockStyle.Fill;
-
-                // Herdar a cor cinzenta escura do teu painel original
                 grelhaPrincipal.BackColor = painelProdutos.BackColor;
                 grelhaPrincipal.Padding = new Padding(15);
-
                 grelhaPrincipal.ColumnCount = 2;
                 grelhaPrincipal.RowCount = 3;
-
                 grelhaPrincipal.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
                 grelhaPrincipal.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-
                 grelhaPrincipal.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33F));
                 grelhaPrincipal.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33F));
                 grelhaPrincipal.RowStyles.Add(new RowStyle(SizeType.Percent, 33.33F));
 
-                // Substituir o painel MANTENDO a mesma camada para não ir para debaixo do teclado
                 Control pai = painelProdutos.Parent;
                 int posicaoNaCamada = pai.Controls.IndexOf(painelProdutos);
                 pai.Controls.Remove(painelProdutos);
                 pai.Controls.Add(grelhaPrincipal);
                 pai.Controls.SetChildIndex(grelhaPrincipal, posicaoNaCamada);
-
-                // Inicializar as gavetas (onde vão ficar os botões)
-                painelFarturas = new FlowLayoutPanel { Dock = DockStyle.Fill };
-                painelChurrosCob = new FlowLayoutPanel { Dock = DockStyle.Fill };
-                painelCones = new FlowLayoutPanel { Dock = DockStyle.Fill };
-                painelChurrosSimp = new FlowLayoutPanel { Dock = DockStyle.Fill };
-                painelRecheadas = new FlowLayoutPanel { Dock = DockStyle.Fill };
-                painelBebidas = new FlowLayoutPanel { Dock = DockStyle.Fill };
-
-                // 2. MAPEAR O CARTAZ: Colocar as caixas nas posições exatas
-                grelhaPrincipal.Controls.Add(CriarGrupo("Farturas Simples", painelFarturas), 0, 0);
-                grelhaPrincipal.Controls.Add(CriarGrupo("Churros C/ Cobertura", painelChurrosCob), 1, 0);
-                grelhaPrincipal.Controls.Add(CriarGrupo("Cones", painelCones), 0, 1);
-                grelhaPrincipal.Controls.Add(CriarGrupo("Churros S/ Cobertura", painelChurrosSimp), 1, 1);
-                grelhaPrincipal.Controls.Add(CriarGrupo("Recheadas", painelRecheadas), 0, 2);
-                grelhaPrincipal.Controls.Add(CriarGrupo("Bebidas", painelBebidas), 1, 2);
             }
 
-            // 3. Ler a Base de Dados e atirar os botões para as caixas
+            // LIMPA TUDO ANTES DE RECARREGAR (Para quando o sogro voltar do menu ADMIN com nomes novos)
+            grelhaPrincipal.Controls.Clear();
+
+            // Um Dicionário mágico que vai guardar as categorias que encontrar na Base de Dados
+            Dictionary<string, FlowLayoutPanel> dicionarioPaineis = new Dictionary<string, FlowLayoutPanel>();
+
             using (SQLiteConnection conexao = ConexaoBD.ObterConexao())
             {
                 try
                 {
                     conexao.Open();
-                    string sql = "SELECT * FROM Produtos ORDER BY OrdemNaTela";
 
-                    using (SQLiteCommand cmd = new SQLiteCommand(sql, conexao))
+                    // 2. DESCOBRIR AS CATEGORIAS REAIS DO CLIENTE (Lê até 6 nomes diferentes da Tabela)
+                    // Agora o programa conta quantos produtos tem cada categoria e mostra as 6 maiores!
+                    string sqlCategorias = "SELECT Categoria FROM Produtos WHERE Categoria IS NOT NULL AND Categoria != '' GROUP BY Categoria ORDER BY COUNT(Id) DESC LIMIT 6";
+                    using (SQLiteCommand cmdCat = new SQLiteCommand(sqlCategorias, conexao))
+                    using (SQLiteDataReader leitorCat = cmdCat.ExecuteReader())
+                    {
+                        int posicao = 0;
+                        while (leitorCat.Read())
+                        {
+                            string nomeCategoria = leitorCat["Categoria"].ToString();
+
+                            FlowLayoutPanel novoPainel = new FlowLayoutPanel { Dock = DockStyle.Fill };
+                            dicionarioPaineis.Add(nomeCategoria, novoPainel);
+
+                            // Cria a caixa com o nome exato que o cliente escreveu (ex: Gelados)
+                            GroupBox grupo = CriarGrupo(nomeCategoria, novoPainel);
+
+                            // Matemática para posicionar na grelha 2x3
+                            int coluna = posicao % 2;
+                            int linha = posicao / 2;
+
+                            grelhaPrincipal.Controls.Add(grupo, coluna, linha);
+                            posicao++;
+                        }
+                    }
+
+                    // 3. LER OS PRODUTOS E ATIRAR PARA A CAIXA CERTA
+                    string sqlProdutos = "SELECT * FROM Produtos ORDER BY OrdemNaTela";
+                    using (SQLiteCommand cmd = new SQLiteCommand(sqlProdutos, conexao))
                     using (SQLiteDataReader leitor = cmd.ExecuteReader())
                     {
                         while (leitor.Read())
                         {
-                            Button btnNovo = new Button();
-                            btnNovo.Text = leitor["NomeExibicao"].ToString();
                             string categoria = leitor["Categoria"].ToString();
 
-                            // 1. DESCOBRIR A CAIXA DESTINO PRIMEIRO PARA A PODER MEDIR
-                            // (Atenção: substitui "FlowLayoutPanel" por "Panel" se as tuas caixas forem apenas "Panels" normais)
-                            Control painelDestino = null;
-                            if (categoria == "Farturas") painelDestino = painelFarturas;
-                            else if (categoria == "Cones") painelDestino = painelCones;
-                            else if (categoria == "Recheadas") painelDestino = painelRecheadas;
-                            else if (categoria == "ChurrosCob") painelDestino = painelChurrosCob;
-                            else if (categoria == "ChurrosSimp") painelDestino = painelChurrosSimp;
-                            else if (categoria == "Bebidas") painelDestino = painelBebidas;
-
-                            if (painelDestino != null)
+                            // Só processa se a categoria do produto estiver numa das nossas caixas ativas
+                            if (dicionarioPaineis.ContainsKey(categoria))
                             {
+                                Button btnNovo = new Button();
+                                btnNovo.Text = leitor["NomeExibicao"].ToString();
+
+                                FlowLayoutPanel painelDestino = dicionarioPaineis[categoria];
                                 btnNovo.Margin = new Padding(5);
 
-                                // ==========================================
-                                // 2. A MATEMÁTICA DA RESPONSIVIDADE (Ajusta a qualquer ecrã!)
-                                // ==========================================
-                                int botoesPorLinha = 3; // Queremos que fiquem sempre 3 botões por linha
+                                // --- MATEMÁTICA RESPONSIVA ---
+                                int botoesPorLinha = 3;
                                 int espacoDasMargens = btnNovo.Margin.Horizontal * botoesPorLinha;
 
-                                // Pega na largura do painel, tira as margens e divide por 3!
-                                btnNovo.Width = (painelDestino.Width - espacoDasMargens) / botoesPorLinha - 4; // -4 para dar folga de segurança
+                                // Mede a largura ideal baseada no tamanho do ecrã
+                                int larguraEstimadaDaCaixa = (grelhaPrincipal.Width / 2) - 30;
 
-                                // A altura vai ser 75% da largura (para não ficarem quadrados gigantes)
+                                btnNovo.Width = (larguraEstimadaDaCaixa - espacoDasMargens) / botoesPorLinha - 4;
+                                if (btnNovo.Width <= 0) btnNovo.Width = 100; // Prevenção de segurança
+
                                 btnNovo.Height = (int)(btnNovo.Width * 0.75);
 
-                                // Letra inteligente: Se o ecrã for grande, letra 13. Se for pequeno, letra 11.
                                 float tamanhoLetra = btnNovo.Width > 140 ? 13f : 11f;
                                 btnNovo.Font = new Font("Segoe UI", tamanhoLetra, FontStyle.Bold);
-
-                                // ==========================================
-
                                 btnNovo.ForeColor = Color.White;
                                 btnNovo.FlatStyle = FlatStyle.Flat;
                                 btnNovo.FlatAppearance.BorderSize = 0;
@@ -158,35 +158,35 @@ namespace FarturasManager
                                 try { btnNovo.BackColor = ColorTranslator.FromHtml(leitor["CorHexa"].ToString()); }
                                 catch { btnNovo.BackColor = Color.Gray; }
 
-                                // ==========================================
-                                // MAGIA DAS IMAGENS AQUI
-                                // ==========================================
                                 try
                                 {
                                     string nomeImagem = leitor["NomeImagem"].ToString();
                                     string caminhoImagem = System.IO.Path.Combine(Application.StartupPath, "Imagens", nomeImagem);
-
                                     if (!string.IsNullOrEmpty(nomeImagem) && System.IO.File.Exists(caminhoImagem))
                                     {
                                         btnNovo.BackgroundImage = Image.FromFile(caminhoImagem);
                                         btnNovo.BackgroundImageLayout = ImageLayout.Zoom;
                                     }
                                 }
-                                catch { /* Ignora */ }
-                                // ==========================================
+                                catch { }
 
                                 btnNovo.Tag = leitor["Preco"];
                                 btnNovo.Click += Produto_Click;
 
-                                // Atira o botão responsivo para dentro da caixa
                                 painelDestino.Controls.Add(btnNovo);
                             }
                         }
                     }
+
+                    // 4. ATIVAR A MATEMÁTICA FLUIDA NO FIM EM TODAS AS CAIXAS CRIADAS
+                    foreach (var painel in dicionarioPaineis.Values)
+                    {
+                        AjustarBotoesAoPainel(painel);
+                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Erro: " + ex.Message);
+                    MessageBox.Show("Erro ao carregar layout: " + ex.Message);
                 }
             }
         }
@@ -265,7 +265,7 @@ namespace FarturasManager
                 // Se já estava a escrever (ex: já escreveu "1"), junta o novo número ("2") -> "12"
                 lblVisor.Text = lblVisor.Text + numeroDigitado;
             }
-        }       
+        }
 
         private void btn2_Click(object sender, EventArgs e)
         {
@@ -447,7 +447,7 @@ namespace FarturasManager
         private void btnFechar_Click(object sender, EventArgs e)
         {
             // 1. Se a lista estiver vazia, não faz nada
-            if (gridVendas.Rows.Count == 0) return;           
+            if (gridVendas.Rows.Count == 0) return;
 
             using (SQLiteConnection conexao = ConexaoBD.ObterConexao())
             {
@@ -492,16 +492,118 @@ namespace FarturasManager
 
         private void button1_Click(object sender, EventArgs e)
         {
-            // Proteção simples por password (para os clientes não clicarem)
-            // Se quiser algo mais profissional, fazemos depois. Por agora, um InputBox improvisado.
+            FormAdmin admin = new FormAdmin();
+            admin.ShowDialog(); // Fica à espera que feches a Administração
 
-            // NOTA: Como C# não tem InputBox nativo fácil, vamos fazer uma validação simples:
-            // Só abre se ele carregar na tecla Control (Ctrl) enquanto clica no botão? 
-            // Ou simplesmente abre e confiamos que o cliente não mexe ali?
+            // Quando voltas, recarrega TUDO automaticamente com os nomes novos!
+            CarregarBotoesDoBanco();
+        }
 
-            // Vamos fazer o simples: Abre direto por agora.
-            FormAdmin telaAdmin = new FormAdmin();
-            telaAdmin.ShowDialog(); // ShowDialog impede de mexer na venda enquanto vê o admin
+        private async void btnEmitirFaturaVendus_Click(object sender, EventArgs e)
+        {
+            // 1. Verifica se há produtos na lista
+            if (gridVendas.Rows.Count > 0)
+            {
+                // 2. Garante que o painel não ficou preso acidentalmente dentro da grelha das farturas!
+                painelPagamentos.Parent = this;
+
+                // 3. A Matemática Mágica: Centrar o painel
+                painelPagamentos.Left = (this.ClientSize.Width - painelPagamentos.Width) / 2;
+                painelPagamentos.Top = (this.ClientSize.Height - painelPagamentos.Height) / 2;
+
+                // 4. Trazer para a frente de TUDO e mostrar
+                painelPagamentos.BringToFront();
+                painelPagamentos.Visible = true;
+            }
+            else
+            {
+                MessageBox.Show("Adicione produtos à venda primeiro!");
+            }
+        }
+
+        private async void ProcessarVenda(int idPagamentoVendus)
+        {
+            if (gridVendas.Rows.Count == 0) return;
+
+            // Lemos o NIF (como combinámos antes)
+            string nifDigitado = txtNIF.Text.Trim();
+
+            try
+            {
+                List<object> itensParaOVendus = new List<object>();
+                foreach (DataGridViewRow linha in gridVendas.Rows)
+                {
+                    if (linha.Cells["Produto"].Value != null)
+                    {
+                        itensParaOVendus.Add(new
+                        {
+                            title = linha.Cells["Produto"].Value.ToString(),
+                            qty = Convert.ToDecimal(linha.Cells["Qtd"].Value),
+                            gross_price = Convert.ToDecimal(linha.Cells["Preco"].Value),
+                            tax_id = "NOR"
+                        });
+                    }
+                }
+
+                // CHAMAMOS A API E ENVIAMOS O ID DO PAGAMENTO
+                string resultado = await VendusAPI.EmitirFaturaSimplificada(itensParaOVendus, nifDigitado, idPagamentoVendus);
+
+                if (resultado.StartsWith("SUCESSO"))
+                {
+                    string jsonPuro = resultado.Replace("SUCESSO: Fatura criada no Vendus!\n\n", "");
+                    dynamic fatura = JsonConvert.DeserializeObject(jsonPuro);
+                    string idFatura = fatura.id.ToString().Trim();
+
+                    string linkPDF = "https://rulote-de-testes.vendus.pt/app/documents/print/" + idFatura;
+
+                    try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(linkPDF) { UseShellExecute = true }); }
+                    catch { MessageBox.Show("Fatura gerada! Link: " + linkPDF); }
+
+                    // LIMPEZA GERAL DEPOIS DO PAGAMENTO
+                    gridVendas.Rows.Clear();
+                    lblTotal.Text = "€ 0,00";
+                    lblVisor.Text = "1";
+                    txtNIF.Text = "";
+
+                    // ESCONDER O PAINEL DE PAGAMENTOS NO FIM (Vamos criar isto no Passo 2)
+                    painelPagamentos.Visible = false;
+
+                    MessageBox.Show("Venda concluída!");
+                }
+                else
+                {
+                    MessageBox.Show(resultado);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro crítico: " + ex.Message);
+            }
+        }
+
+        private void btnVoltar_Click(object sender, EventArgs e)
+        {
+            painelPagamentos.Visible = false; // Esconde o painel se ele mudar de ideias
+        }
+
+        private void btnNumerario_Click(object sender, EventArgs e)
+        {
+            ProcessarVenda(318655625); // Manda faturar com o ID do Dinheiro
+        }
+
+        private void btnMultibanco_Click(object sender, EventArgs e)
+        {
+            ProcessarVenda(318655626); // Manda faturar com o ID do MB
+        }
+
+        private void btnCredito_Click(object sender, EventArgs e)
+        {
+            ProcessarVenda(318655627); // Manda faturar com o ID do Cartão Crédito
+        }
+
+        private void btnTransferencia_Click(object sender, EventArgs e)
+        {
+            ProcessarVenda(318655629); // Manda faturar com o ID da Transferência/MBWay
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -550,6 +652,35 @@ namespace FarturasManager
         {
             lblVisor.Text = "1";
             utilizadorEstaAEscrever = false; // Reset à memória
+        }
+
+        private void AjustarBotoesAoPainel(Control painel)
+        {
+            int totalBotoes = painel.Controls.Count;
+
+            // Se a caixa estiver vazia, não fazemos contas
+            if (totalBotoes == 0) return;
+
+            // Calcula o espaço retirando as margens (10px por botão)
+            int larguraDisponivel = painel.Width - (totalBotoes * 10);
+
+            // A MAGIA: Divide a largura total pelo número exato de botões!
+            int larguraBotao = larguraDisponivel / totalBotoes;
+
+            foreach (Control controlo in painel.Controls)
+            {
+                if (controlo is Button btn)
+                {
+                    btn.Width = larguraBotao - 2; // -2 para uma folguinha de segurança
+
+                    // Ocupa a altura INTEIRA da caixa cinzenta (nunca cria uma segunda linha)
+                    btn.Height = painel.Height - 15;
+
+                    // Inteligência extra: Se o botão ficar muito esmagado, encolhe a letra para caber!
+                    float tamanhoLetra = btn.Width > 110 ? 13f : 10f;
+                    btn.Font = new Font("Segoe UI", tamanhoLetra, FontStyle.Bold);
+                }
+            }
         }
     }
 }

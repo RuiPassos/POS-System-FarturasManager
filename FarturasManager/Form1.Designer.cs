@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnEmitirFaturaVendus = new System.Windows.Forms.Button();
             this.btnRemover = new System.Windows.Forms.Button();
             this.btnFechar = new System.Windows.Forms.Button();
             this.lblTotal = new System.Windows.Forms.Label();
@@ -50,20 +51,42 @@
             this.btnApagar = new System.Windows.Forms.Button();
             this.btn1 = new System.Windows.Forms.Button();
             this.painelProdutos = new System.Windows.Forms.FlowLayoutPanel();
+            this.txtNIF = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.painelPagamentos = new System.Windows.Forms.Panel();
+            this.btnNumerario = new System.Windows.Forms.Button();
+            this.btnMultibanco = new System.Windows.Forms.Button();
+            this.btnCredito = new System.Windows.Forms.Button();
+            this.btnTransferencia = new System.Windows.Forms.Button();
+            this.btnVoltar = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridVendas)).BeginInit();
             this.panel2.SuspendLayout();
+            this.painelProdutos.SuspendLayout();
+            this.painelPagamentos.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.txtNIF);
+            this.panel1.Controls.Add(this.btnEmitirFaturaVendus);
             this.panel1.Controls.Add(this.btnRemover);
             this.panel1.Controls.Add(this.btnFechar);
             this.panel1.Controls.Add(this.lblTotal);
             this.panel1.Controls.Add(this.gridVendas);
             resources.ApplyResources(this.panel1, "panel1");
             this.panel1.Name = "panel1";
+            // 
+            // btnEmitirFaturaVendus
+            // 
+            this.btnEmitirFaturaVendus.BackColor = System.Drawing.Color.RoyalBlue;
+            resources.ApplyResources(this.btnEmitirFaturaVendus, "btnEmitirFaturaVendus");
+            this.btnEmitirFaturaVendus.ForeColor = System.Drawing.Color.White;
+            this.btnEmitirFaturaVendus.Name = "btnEmitirFaturaVendus";
+            this.btnEmitirFaturaVendus.UseVisualStyleBackColor = false;
+            this.btnEmitirFaturaVendus.Click += new System.EventHandler(this.btnEmitirFaturaVendus_Click);
             // 
             // btnRemover
             // 
@@ -223,7 +246,69 @@
             // 
             resources.ApplyResources(this.painelProdutos, "painelProdutos");
             this.painelProdutos.BackColor = System.Drawing.SystemColors.WindowFrame;
+            this.painelProdutos.Controls.Add(this.painelPagamentos);
             this.painelProdutos.Name = "painelProdutos";
+            // 
+            // txtNIF
+            // 
+            resources.ApplyResources(this.txtNIF, "txtNIF");
+            this.txtNIF.Name = "txtNIF";
+            // 
+            // label1
+            // 
+            resources.ApplyResources(this.label1, "label1");
+            this.label1.Name = "label1";
+            // 
+            // painelPagamentos
+            // 
+            this.painelPagamentos.BackColor = System.Drawing.Color.Blue;
+            this.painelPagamentos.Controls.Add(this.btnMultibanco);
+            this.painelPagamentos.Controls.Add(this.btnVoltar);
+            this.painelPagamentos.Controls.Add(this.btnTransferencia);
+            this.painelPagamentos.Controls.Add(this.btnCredito);
+            this.painelPagamentos.Controls.Add(this.btnNumerario);
+            resources.ApplyResources(this.painelPagamentos, "painelPagamentos");
+            this.painelPagamentos.Name = "painelPagamentos";
+            // 
+            // btnNumerario
+            // 
+            this.btnNumerario.BackColor = System.Drawing.Color.LimeGreen;
+            resources.ApplyResources(this.btnNumerario, "btnNumerario");
+            this.btnNumerario.Name = "btnNumerario";
+            this.btnNumerario.UseVisualStyleBackColor = false;
+            this.btnNumerario.Click += new System.EventHandler(this.btnNumerario_Click);
+            // 
+            // btnMultibanco
+            // 
+            this.btnMultibanco.BackColor = System.Drawing.Color.DodgerBlue;
+            resources.ApplyResources(this.btnMultibanco, "btnMultibanco");
+            this.btnMultibanco.Name = "btnMultibanco";
+            this.btnMultibanco.UseVisualStyleBackColor = false;
+            this.btnMultibanco.Click += new System.EventHandler(this.btnMultibanco_Click);
+            // 
+            // btnCredito
+            // 
+            this.btnCredito.BackColor = System.Drawing.Color.Orange;
+            resources.ApplyResources(this.btnCredito, "btnCredito");
+            this.btnCredito.Name = "btnCredito";
+            this.btnCredito.UseVisualStyleBackColor = false;
+            this.btnCredito.Click += new System.EventHandler(this.btnCredito_Click);
+            // 
+            // btnTransferencia
+            // 
+            this.btnTransferencia.BackColor = System.Drawing.Color.Purple;
+            resources.ApplyResources(this.btnTransferencia, "btnTransferencia");
+            this.btnTransferencia.Name = "btnTransferencia";
+            this.btnTransferencia.UseVisualStyleBackColor = false;
+            this.btnTransferencia.Click += new System.EventHandler(this.btnTransferencia_Click);
+            // 
+            // btnVoltar
+            // 
+            this.btnVoltar.BackColor = System.Drawing.Color.Red;
+            resources.ApplyResources(this.btnVoltar, "btnVoltar");
+            this.btnVoltar.Name = "btnVoltar";
+            this.btnVoltar.UseVisualStyleBackColor = false;
+            this.btnVoltar.Click += new System.EventHandler(this.btnVoltar_Click);
             // 
             // Form1
             // 
@@ -241,6 +326,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridVendas)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.painelProdutos.ResumeLayout(false);
+            this.painelPagamentos.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -268,6 +355,15 @@
         private System.Windows.Forms.FlowLayoutPanel painelProdutos;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lblVisor;
+        private System.Windows.Forms.Button btnEmitirFaturaVendus;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtNIF;
+        private System.Windows.Forms.Panel painelPagamentos;
+        private System.Windows.Forms.Button btnVoltar;
+        private System.Windows.Forms.Button btnTransferencia;
+        private System.Windows.Forms.Button btnCredito;
+        private System.Windows.Forms.Button btnMultibanco;
+        private System.Windows.Forms.Button btnNumerario;
     }
 }
 

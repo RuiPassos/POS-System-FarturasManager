@@ -107,16 +107,16 @@ namespace FarturasManager
                     // ====================================================
                     if (graficoTop != null)
                     {
-                        // Nova pesquisa SQL: Agrupa o dinheiro ganho pela hora em que foi vendido
-                        string sqlHoras = "SELECT strftime('%H:00', DataHora) as HoraLabel, " +
-                                          "SUM(ValorTotal) as TotalRecebido, " +
-                                          "strftime('%Y-%m-%d %H:00', DataHora) as HoraOrdenacao " +
-                                          "FROM Vendas " +
-                                          "WHERE DataHora >= @inicio AND DataHora <= @fim " +
-                                          "GROUP BY HoraOrdenacao, HoraLabel " +
-                                          "ORDER BY HoraOrdenacao ASC";
+                        // Repara que mudei para @inicio e @fim para combinar com os parâmetros em baixo!
+                        string sqlGrafico = @"
+                                        SELECT strftime('%H', DataHora) || ':00' AS Hora, 
+                                               SUM(ValorTotal) AS TotalVendido
+                                        FROM Vendas
+                                        WHERE DataHora >= @inicio AND DataHora <= @fim
+                                        GROUP BY strftime('%H', DataHora)
+                                        ORDER BY strftime('%H', DataHora)";
 
-                        SQLiteDataAdapter adaptadorHoras = new SQLiteDataAdapter(sqlHoras, conexao);
+                        SQLiteDataAdapter adaptadorHoras = new SQLiteDataAdapter(sqlGrafico, conexao);
                         adaptadorHoras.SelectCommand.Parameters.AddWithValue("@inicio", dataInicio);
                         adaptadorHoras.SelectCommand.Parameters.AddWithValue("@fim", dataFim);
 
@@ -131,9 +131,9 @@ namespace FarturasManager
                         // Voltar para gráfico de Colunas (faz mais sentido para linhas de tempo)
                         graficoTop.Series["Faturação Horária"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Column;
 
-                        // O Eixo do X mostra a hora (ex: 22:00), o Y mostra o Dinheiro
-                        graficoTop.Series["Faturação Horária"].XValueMember = "HoraLabel";
-                        graficoTop.Series["Faturação Horária"].YValueMembers = "TotalRecebido";
+                        // <-- A CORREÇÃO PRINCIPAL: Usar os nomes exatos que vêm da Base de Dados!
+                        graficoTop.Series["Faturação Horária"].XValueMember = "Hora";
+                        graficoTop.Series["Faturação Horária"].YValueMembers = "TotalVendido";
 
                         // Formatações de Beleza e Limpeza
                         graficoTop.Series["Faturação Horária"].IsValueShownAsLabel = true;
@@ -287,6 +287,13 @@ namespace FarturasManager
             {
                 MessageBox.Show("Por favor, selecione pelo menos uma linha no Histórico para poder apagar.");
             }
+        }
+
+        private void btnGerirProdutos_Click(object sender, EventArgs e)
+        {
+            // Abre a janela nova de gestão de produtos e obriga o utilizador a fechá-la antes de voltar ao admin
+            FormGerirProdutos formGerir = new FormGerirProdutos();
+            formGerir.ShowDialog();
         }
     }
 }

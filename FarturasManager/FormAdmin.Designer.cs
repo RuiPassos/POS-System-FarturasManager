@@ -42,6 +42,7 @@
             this.graficoTop = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.gridHistorico = new System.Windows.Forms.DataGridView();
             this.btnApagarVenda = new System.Windows.Forms.Button();
+            this.btnGerirProdutos = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridTopVendas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.graficoTop)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridHistorico)).BeginInit();
@@ -164,11 +165,24 @@
             this.btnApagarVenda.UseVisualStyleBackColor = false;
             this.btnApagarVenda.Click += new System.EventHandler(this.btnApagarVenda_Click);
             // 
+            // btnGerirProdutos
+            // 
+            this.btnGerirProdutos.BackColor = System.Drawing.Color.Gold;
+            this.btnGerirProdutos.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGerirProdutos.Location = new System.Drawing.Point(1304, 921);
+            this.btnGerirProdutos.Name = "btnGerirProdutos";
+            this.btnGerirProdutos.Size = new System.Drawing.Size(215, 46);
+            this.btnGerirProdutos.TabIndex = 12;
+            this.btnGerirProdutos.Text = "Gerir Produtos";
+            this.btnGerirProdutos.UseVisualStyleBackColor = false;
+            this.btnGerirProdutos.Click += new System.EventHandler(this.btnGerirProdutos_Click);
+            // 
             // FormAdmin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1875, 1048);
+            this.Controls.Add(this.btnGerirProdutos);
             this.Controls.Add(this.btnApagarVenda);
             this.Controls.Add(this.gridHistorico);
             this.Controls.Add(this.graficoTop);
@@ -204,5 +218,6 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart graficoTop;
         private System.Windows.Forms.DataGridView gridHistorico;
         private System.Windows.Forms.Button btnApagarVenda;
+        private System.Windows.Forms.Button btnGerirProdutos;
     }
 }
