@@ -1,4 +1,4 @@
-﻿using FarturaManager.Dados; // Isto liga ao Passo 2
+﻿using FarturaManager.Dados; 
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace FarturasManager
             // OBRIGA O PROGRAMA A MAXIMIZAR ANTES DE FAZER AS CONTAS!
             this.WindowState = FormWindowState.Maximized;
 
-            // A LINHA MÁGICA QUE FALTAVA! (Cria a Base de Dados e os Produtos)
+            // Cria a Base de Dados e os Produtos
             ConexaoBD.CriarBancoSeNaoExistir();
 
             // --- 1. CONFIGURAR A LISTA (GRID) ---
@@ -42,7 +42,7 @@ namespace FarturasManager
             gridVendas.Columns.Add("Total", "Total");
             // O resto do espaço fica para esta coluna
 
-            // Configurações visuais para ficar bonito
+            // Configurações visuais 
             gridVendas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             gridVendas.AllowUserToAddRows = false; // Impede aquela linha vazia no fim
             gridVendas.ReadOnly = true; // Não deixa escrever na grelha
@@ -80,7 +80,7 @@ namespace FarturasManager
                 pai.Controls.SetChildIndex(grelhaPrincipal, posicaoNaCamada);
             }
 
-            // LIMPA TUDO ANTES DE RECARREGAR (Para quando o sogro voltar do menu ADMIN com nomes novos)
+            // LIMPA TUDO ANTES DE RECARREGAR 
             grelhaPrincipal.Controls.Clear();
 
             // Um Dicionário mágico que vai guardar as categorias que encontrar na Base de Dados
@@ -495,7 +495,7 @@ namespace FarturasManager
             FormAdmin admin = new FormAdmin();
             admin.ShowDialog(); // Fica à espera que feches a Administração
 
-            // Quando voltas, recarrega TUDO automaticamente com os nomes novos!
+            // Quando se volta, recarrega TUDO automaticamente com os nomes novos!
             CarregarBotoesDoBanco();
         }
 
@@ -565,7 +565,7 @@ namespace FarturasManager
                     lblVisor.Text = "1";
                     txtNIF.Text = "";
 
-                    // ESCONDER O PAINEL DE PAGAMENTOS NO FIM (Vamos criar isto no Passo 2)
+                    // ESCONDER O PAINEL DE PAGAMENTOS NO FIM 
                     painelPagamentos.Visible = false;
 
                     MessageBox.Show("Venda concluída!");
