@@ -51,7 +51,7 @@ namespace FarturasManager
         }
 
         // ====================================================
-        // NOVA FUNÇÃO: Faz as contas e os gráficos baseada nas datas
+        // FUNÇÃO: Faz as contas e os gráficos baseada nas datas
         // ====================================================
         private void CarregarDashboard(DateTime dataInicio, DateTime dataFim)
         {
@@ -65,11 +65,9 @@ namespace FarturasManager
                     conexao.Open();
 
                     // 1. CALCULAR A FATURAÇÃO TOTAL
-                    // <-- AQUI MUDOU DE ISNULL PARA IFNULL
                     string sqlTotal = "SELECT IFNULL(SUM(ValorTotal), 0) FROM Vendas " +
                                       "WHERE DataHora >= @inicio AND DataHora <= @fim";
 
-                    // <-- AQUI MUDOU PARA SQLITECOMMAND
                     using (SQLiteCommand cmd = new SQLiteCommand(sqlTotal, conexao))
                     {
                         cmd.Parameters.AddWithValue("@inicio", dataInicio);
@@ -86,7 +84,6 @@ namespace FarturasManager
                                     "GROUP BY NomeProduto " +
                                     "ORDER BY Qtd DESC";
 
-                    // <-- AQUI MUDOU PARA SQLITEDATAADAPTER
                     SQLiteDataAdapter adaptadorTop = new SQLiteDataAdapter(sqlTop, conexao);
                     adaptadorTop.SelectCommand.Parameters.AddWithValue("@inicio", dataInicio);
                     adaptadorTop.SelectCommand.Parameters.AddWithValue("@fim", dataFim);
@@ -107,7 +104,6 @@ namespace FarturasManager
                     // ====================================================
                     if (graficoTop != null)
                     {
-                        // Repara que mudei para @inicio e @fim para combinar com os parâmetros em baixo!
                         string sqlGrafico = @"
                                         SELECT strftime('%H', DataHora) || ':00' AS Hora, 
                                                SUM(ValorTotal) AS TotalVendido
@@ -131,7 +127,7 @@ namespace FarturasManager
                         // Voltar para gráfico de Colunas (faz mais sentido para linhas de tempo)
                         graficoTop.Series["Faturação Horária"].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Column;
 
-                        // <-- A CORREÇÃO PRINCIPAL: Usar os nomes exatos que vêm da Base de Dados!
+                        // Usar os nomes exatos que vêm da Base de Dados!
                         graficoTop.Series["Faturação Horária"].XValueMember = "Hora";
                         graficoTop.Series["Faturação Horária"].YValueMembers = "TotalVendido";
 
@@ -160,7 +156,7 @@ namespace FarturasManager
                                           "WHERE DataHora >= @inicio AND DataHora <= @fim " +
                                           "ORDER BY DataHora DESC";
 
-                    // <-- AQUI MUDOU PARA SQLITEDATAADAPTER
+                    // SQLITEDATAADAPTER
                     SQLiteDataAdapter adaptadorHistorico = new SQLiteDataAdapter(sqlHistorico, conexao);
                     adaptadorHistorico.SelectCommand.Parameters.AddWithValue("@inicio", dataInicio);
                     adaptadorHistorico.SelectCommand.Parameters.AddWithValue("@fim", dataFim);
@@ -174,7 +170,7 @@ namespace FarturasManager
                         DataGridView gridHist = (DataGridView)this.Controls.Find("gridHistorico", true)[0];
                         gridHist.DataSource = tabelaHistorico;
 
-                        // ESCONDER A COLUNA DO ID (Ninguém precisa de ver o número técnico)
+                        // ESCONDER A COLUNA DO ID 
                         if (gridHist.Columns.Contains("Id"))
                             gridHist.Columns["Id"].Visible = false;
 
