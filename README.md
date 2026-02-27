@@ -29,10 +29,10 @@ Desenvolvi uma solução personalizada que prioriza a **velocidade** e a **fiabi
 
 | **Interface de Vendas (PDV)** | **Seleção de Pagamento** |
 | :---: | :---: |
-| <img src="https://github.com/user-attachments/assets/6fcc8d4e-a7bc-46c6-a991-fb79435155b5" width="400"> | <img width="3439" height="1439" alt="image" src="https://github.com/user-attachments/assets/1948f6d8-fd6b-4327-b7f8-418eeda67681" />|
+| <img src="https://github.com/user-attachments/assets/6fcc8d4e-a7bc-46c6-a991-fb79435155b5" width="400"> | <img src="https://github.com/user-attachments/assets/1948f6d8-fd6b-4327-b7f8-418eeda67681" width="400"> |
 | *Registo rápido com suporte a NIF* | *Múltiplos métodos de pagamento* |
 | **Dashboard Administrativo** | **Gestão de Produtos** |
-| <img width="1866" height="1072" alt="image" src="https://github.com/user-attachments/assets/79441d3f-2557-4d3c-b941-119c4b92bfe8" /> | <img width="1375" height="788" alt="image" src="https://github.com/user-attachments/assets/926bbbe0-6a75-407a-b59d-9f2d222c9564" />|
+| <img src="https://github.com/user-attachments/assets/79441d3f-2557-4d3c-b941-119c4b92bfe8" width="400"> | <img src="https://github.com/user-attachments/assets/926bbbe0-6a75-407a-b59d-9f2d222c9564" width="400"> |
 | *Análise de faturação por hora* | *CRUD completo de inventário e fotos* |
 
 ---
@@ -66,7 +66,7 @@ Desenvolvi uma solução personalizada que prioriza a **velocidade** e a **fiabi
 
 ## 💻 Como Executar
 1. **Ambiente**: Ter o .NET Framework e o Visual Studio 2022 instalados.
-2. **Clone**: `git clone https://github.com/teu-utilizador/POS-System_FarturasManager.git`
+2. **Clone**: `git clone https://github.com/RuiPassos/POS-System_FarturasManager.git`
 3. **Configuração**: 
    * Localiza o ficheiro `VendusAPI.cs`.
    * Insere a tua `ApiKey` na variável correspondente.
