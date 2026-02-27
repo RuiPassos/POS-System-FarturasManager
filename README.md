@@ -66,7 +66,7 @@ Desenvolvi uma solução personalizada que prioriza a **velocidade** e a **fiabi
 
 ## 💻 Como Executar
 1. **Ambiente**: Ter o .NET Framework e o Visual Studio 2022 instalados.
-2. **Clone**: `git clone https://github.com/RuiPassos/POS-System_FarturasManager.git`
+2. **Clone**: `git clone https://github.com/RuiPassos/POS-System-FarturasManager.git`
 3. **Configuração**: 
    * Localiza o ficheiro `VendusAPI.cs`.
    * Insere a tua `ApiKey` na variável correspondente.
