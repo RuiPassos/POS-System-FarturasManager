@@ -40,14 +40,14 @@ namespace FarturasManager
 
         private void FormGerirProdutos_Load(object sender, EventArgs e)
         {
-            CarregarCategoriasNaCombo(); // <--- Adiciona esta linha
+            CarregarCategoriasNaCombo(); 
             CarregarGrelha();
             gridProdutos.AllowUserToAddRows = false;
         }
 
         private void CarregarCategoriasNaCombo()
         {
-            cmbCategoria.Items.Clear(); // Limpa as que escreveste à mão nas propriedades
+            cmbCategoria.Items.Clear(); 
 
             using (SQLiteConnection conexao = ConexaoBD.ObterConexao())
             {
@@ -96,13 +96,13 @@ namespace FarturasManager
         // ==========================================
         private void gridProdutos_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Verifica se clicou numa linha válida (ignora os cabeçalhos)
+            // Verifica se clicou numa linha válida 
             if (e.RowIndex >= 0)
             {
                 DataGridViewRow linha = gridProdutos.Rows[e.RowIndex];
 
                 // =========================================================
-                // O NOSSO ESCUDO PROTETOR (PASSO 2) ENTRA AQUI!
+                // O NOSSO ESCUDO PROTETOR 
                 // =========================================================
                 if (linha.IsNewRow) return; // Se for linha nova, ignora
                 if (linha.Cells["Id"].Value == DBNull.Value) return; // Se estiver vazia, ignora
@@ -150,7 +150,7 @@ namespace FarturasManager
         }
 
         // ==========================================
-        // 4. GUARDAR OU ATUALIZAR (VERSÃO COM CORES INTELIGENTES!)
+        // 4. GUARDAR OU ATUALIZAR 
         // ==========================================
         private void btnGuardar_Click(object sender, EventArgs e)
         {
@@ -185,10 +185,9 @@ namespace FarturasManager
                     corDecidida = "#3498db"; // Azul padrão para outros
                     break;
             }
-            // Podes alterar estes códigos Hexa (#...) acima para as cores que mais gostares!
 
 
-            // 2. TRATAR DA IMAGEM (Isto mantém-se igual)
+            // 2. TRATAR DA IMAGEM 
             string nomeImagemParaBD = nomeFotoAtual;
             if (!string.IsNullOrEmpty(caminhoNovaFoto))
             {
@@ -202,20 +201,18 @@ namespace FarturasManager
                 File.Copy(caminhoNovaFoto, destino, true);
             }
 
-            // 3. GRAVAR NA BASE DE DADOS (Agora usa a @cor)
+            // 3. GRAVAR NA BASE DE DADOS 
             using (SQLiteConnection conexao = ConexaoBD.ObterConexao())
             {
                 conexao.Open();
                 string sql;
 
-                if (idProdutoSelecionado == 0) // É UM PRODUTO NOVO
-                {
-                    // Repara que agora usamos @cor em vez do azul fixo '#3498db'
+                if (idProdutoSelecionado == 0) 
+                {           
                     sql = "INSERT INTO Produtos (NomeExibicao, Categoria, Preco, NomeImagem, CorHexa) VALUES (@nome, @categoria, @preco, @imagem, @cor)";
                 }
-                else // ESTAMOS A ATUALIZAR UM PRODUTO EXISTENTE
+                else 
                 {
-                    // Adicionei "CorHexa = @cor" para atualizar a cor se mudares a categoria!
                     sql = "UPDATE Produtos SET NomeExibicao = @nome, Categoria = @categoria, Preco = @preco, NomeImagem = @imagem, CorHexa = @cor WHERE Id = @id";
                 }
 
