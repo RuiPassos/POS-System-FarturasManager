@@ -10,10 +10,10 @@ namespace FarturasManager
 {
     public static class VendusAPI
     {
-        // 🛑 COLA A TUA CHAVE GIGANTE AQUI DENTRO DAS ASPAS!
+        // COLAR CHAVE DA API AQUI
         private static readonly string ApiKey = "COLOQUE_A_SUA_CHAVE_AQUI";
 
-        // Adicionamos a variável nifCliente (por defeito vai vazia)
+        // variável nifCliente por omissão vai vazia
         public static async Task<string> EmitirFaturaSimplificada(List<object> itensDaVenda, string nifCliente = "", int idPagamento = 1)
         {
             try
@@ -31,7 +31,7 @@ namespace FarturasManager
 
                     dynamic dadosFatura;
 
-                    // Se NÃO houver NIF válido, fatura normal (mas usa o idPagamento que escolhemos no ecrã!)
+                    // Se NÃO houver NIF válido, fatura normal 
                     if (string.IsNullOrEmpty(nifCliente) || nifCliente.Length != 9)
                     {
                         dadosFatura = new
@@ -93,7 +93,7 @@ namespace FarturasManager
                     // 3. O Link oficial para descarregar o PDF do documento
                     string urlPdf = "https://www.vendus.pt/ws/v1.1/documents/" + idDocumento + ".pdf";
 
-                    // Usamos GetAsync para conseguir capturar o código do erro (ex: 401, 403, 404)
+                    // GetAsync para conseguir capturar o código do erro (ex: 401, 403, 404)
                     HttpResponseMessage resposta = await cliente.GetAsync(urlPdf);
 
                     if (!resposta.IsSuccessStatusCode)
